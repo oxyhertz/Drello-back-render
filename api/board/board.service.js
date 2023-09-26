@@ -25,7 +25,8 @@ async function query(filterBy) {
 async function getById(boardId) {
   try {
     const collection = await dbService.getCollection('board')
-    const board = await collection.findOne({ _id: ObjectId(boardId) })
+    // const board = await collection.findOne({ _id: ObjectId(boardId) })
+    const board = await collection.findOne({ _id: ObjectId(boardId) }, { projection: { activities: { $slice: 50 } } })
     return board
   } catch (err) {
     logger.error(`while finding board ${boardId}`, err)
@@ -46,10 +47,10 @@ async function remove(boardId) {
 
 async function add(board) {
   try {
-    const collection = await dbService.getCollection('board');
-    board.createdAt = Date.now();
-    const addedBoard = await collection.insertOne(board);
-    return board;
+    const collection = await dbService.getCollection('board')
+    board.createdAt = Date.now()
+    const addedBoard = await collection.insertOne(board)
+    return board
   } catch (err) {
     logger.error('cannot insert board', err)
     throw err
@@ -58,11 +59,11 @@ async function add(board) {
 
 async function update(board) {
   try {
-    const { _id, ...boardToSave } = board;
-    boardToSave._id = ObjectId(_id);
+    const { _id, ...boardToSave } = board
+    boardToSave._id = ObjectId(_id)
     const collection = await dbService.getCollection('board')
     await collection.updateOne({ _id: boardToSave._id }, { $set: { ...boardToSave } })
-    return boardToSave;
+    return boardToSave
   } catch (err) {
     logger.error(`cannot update board ${board._id}`, err)
     throw err
@@ -95,17 +96,17 @@ function _sort(boards, { sortBy }) {
   switch (sortBy) {
     case 'name':
       boards.sort((t1, t2) => {
-        return t1.name.toLowerCase().localeCompare(t2.name.toLowerCase());
+        return t1.name.toLowerCase().localeCompare(t2.name.toLowerCase())
       })
-      break;
+      break
     case 'time':
       boards.sort((t1, t2) => {
-        return ObjectId(t2._id).getTimestamp() - ObjectId(t1._id).getTimestamp();
+        return ObjectId(t2._id).getTimestamp() - ObjectId(t1._id).getTimestamp()
       })
-      break;
+      break
     case 'price':
-      boards.sort((t1, t2) => t1.price - t2.price);
-      break;
+      boards.sort((t1, t2) => t1.price - t2.price)
+      break
   }
-  return boards;
+  return boards
 }
