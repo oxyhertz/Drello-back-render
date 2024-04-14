@@ -1,4 +1,3 @@
 module.exports = {
-    dbURL:
-        'mongodb+srv://mongoSprint:Eb36Ywb*Q2TY&dw^qQ4f@cluster0.yyebs.mongodb.net/board_db?retryWrites=true&w=majority'
+  dbURL: 'mongodb+srv://admin:zy115c0bi8o9dTto@cluster0.2j4r0rw.mongodb.net/',
 }
